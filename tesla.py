@@ -1,17 +1,29 @@
+# prompt: give a code to follow tesla price stock day by day with graph
+
 import yfinance as yf
+import matplotlib.pyplot as plt
 import pandas as pd
 
-# Define the ticker symbol and date range
-symbol = 'TSLA'
-sdate = '2021-01-01'
-edate = '2024-06-30'
+# Define the ticker symbol
+tickerSymbol = 'TSLA'
 
-# Download the data using yfinance
-tsla_data = yf.download(symbol, start=sdate, end=edate, interval='1d')
+# Get data on this ticker
+tickerData = yf.Ticker(tickerSymbol)
 
-# Calculate daily percentage change
-tsla_data['Daily_Change'] = tsla_data['Adj Close'].pct_change() * 100
+# Get the historical prices for this ticker
+tickerDf = tickerData.history(period='1d', start='2023-1-1', end='2024-1-1')
 
-# Display the data
-pd.options.display.max_rows = None  # To display all rows
-print(tsla_data[['Adj Close', 'Daily_Change']])
+# Show the data
+print(tickerDf)
+
+# Create a plot of the closing price
+plt.figure(figsize=(12, 6))  # Adjust figure size for better readability
+plt.plot(tickerDf['Close'], label='Close Price', color='blue')
+plt.title('Tesla Stock Price')
+plt.xlabel('Date')
+plt.ylabel('Price (USD)')
+plt.grid(True)  # Add a grid for better visualization
+plt.legend()
+plt.xticks(rotation=45) # Rotate x-axis labels for better readability
+plt.tight_layout() # Adjust layout to prevent labels from overlapping
+plt.show()
