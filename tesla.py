@@ -1,28 +1,38 @@
-import yfinance as yf
+import streamlit as st
 import matplotlib.pyplot as plt
-import pandas as pd
 import datetime
+import plotly.graph_objs as go
 
-def track_tesla_stock():
-  # Define the ticker symbol
-  tickerSymbol = 'TSLA'
+import appdirs as ad
+ad.user_cache_dir = lambda *args: "/tmp"
+import yfinance as yf
 
-  # Get data on this ticker
-  tickerData = yf.Ticker(tickerSymbol)
+# Specify title and logo for the webpage.
+# Set up your web app
+st.set_page_config(layout="wide", page_title="WebApp_Demo")
 
-  # Get the historical prices for this ticker (last 30 days for demonstration)
-  today = datetime.date.today()
-  start_date = today - datetime.timedelta(days=30)  
-  tickerDf = tickerData.history(period='1d', start=start_date, end=today)
+# Sidebar
+st.sidebar.title("Input")
+symbol = st.sidebar.text_input('Please enter the stock symbol: ', 'NVDA').upper()
+# Selection for a specific time frame.
+col1, col2 = st.sidebar.columns(2, gap="medium")
+with col1:
+    sdate = st.date_input('Start Date',value=datetime.date(2024,1,1))
+with col2:
+    edate = st.date_input('End Date',value=datetime.date.today())
 
-  # Create a plot of the closing price
-  plt.figure(figsize=(12, 6))
-  plt.plot(tickerDf['Close'], label='Close Price', color='blue')
-  plt.title('Tesla Stock Price (Last 30 Days)')
-  plt.xlabel('Date')
-  plt.ylabel('Price (USD)')
-  plt.grid(True)
-  plt.legend()
-  plt.xticks(rotation=45)
-  plt.tight_layout()
-  plt.show()
+st.title(f"{symbol}")
+
+stock = yf.Ticker(symbol)
+if stock is not None:
+  # Display company's basics
+  st.write(f"# Sector : {stock.info['sector']}")
+  st.write(f"# Company Beta : {stock.info['beta']}")
+else:
+  st.error("Failed to fetch historical data.")
+
+data = yf.download(symbol,start=sdate,end=edate)
+if data is not None:
+  st.line_chart(data['Close'],x_label="Date",y_label="Close")
+else:
+    st.error("Failed to fetch historical data.")
