@@ -1,3 +1,6 @@
+import yfinance as yf
+import pandas as pd
+
 # Define the ticker symbol and date range
 symbol = 'TSLA'
 sdate = '2021-01-01'
