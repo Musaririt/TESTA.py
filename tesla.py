@@ -1,29 +1,28 @@
-# prompt: give a code to follow tesla price stock day by day with graph
-
 import yfinance as yf
 import matplotlib.pyplot as plt
 import pandas as pd
+import datetime
 
-# Define the ticker symbol
-tickerSymbol = 'TSLA'
+def track_tesla_stock():
+  # Define the ticker symbol
+  tickerSymbol = 'TSLA'
 
-# Get data on this ticker
-tickerData = yf.Ticker(tickerSymbol)
+  # Get data on this ticker
+  tickerData = yf.Ticker(tickerSymbol)
 
-# Get the historical prices for this ticker
-tickerDf = tickerData.history(period='1d', start='2023-1-1', end='2024-1-1')
+  # Get the historical prices for this ticker (last 30 days for demonstration)
+  today = datetime.date.today()
+  start_date = today - datetime.timedelta(days=30)  
+  tickerDf = tickerData.history(period='1d', start=start_date, end=today)
 
-# Show the data
-print(tickerDf)
-
-# Create a plot of the closing price
-plt.figure(figsize=(12, 6))  # Adjust figure size for better readability
-plt.plot(tickerDf['Close'], label='Close Price', color='blue')
-plt.title('Tesla Stock Price')
-plt.xlabel('Date')
-plt.ylabel('Price (USD)')
-plt.grid(True)  # Add a grid for better visualization
-plt.legend()
-plt.xticks(rotation=45) # Rotate x-axis labels for better readability
-plt.tight_layout() # Adjust layout to prevent labels from overlapping
-plt.show()
+  # Create a plot of the closing price
+  plt.figure(figsize=(12, 6))
+  plt.plot(tickerDf['Close'], label='Close Price', color='blue')
+  plt.title('Tesla Stock Price (Last 30 Days)')
+  plt.xlabel('Date')
+  plt.ylabel('Price (USD)')
+  plt.grid(True)
+  plt.legend()
+  plt.xticks(rotation=45)
+  plt.tight_layout()
+  plt.show()
